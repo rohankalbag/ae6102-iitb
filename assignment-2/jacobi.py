@@ -41,13 +41,13 @@ def jacobi_numpy_vectorized(grid):
 
 def jacobi_list_loop(grid, N):
     # obtain the grid as a python list object
-    temp_grid = grid.tolist()
+    temp_grid = grid.copy()
     for i in range(1, N-1):
         for j in range(1, N-1):
-            temp_grid[i][j] = (grid[i+1, j]
-                               + grid[i-1, j]
-                               + grid[i, j+1]
-                               + grid[i, j-1])*0.25
+            temp_grid[i][j] = (grid[i+1][j]
+                               + grid[i-1][j]
+                               + grid[i][j+1]
+                               + grid[i][j-1])*0.25
 
     # iterate to update every element of grid
     for i in range(1, N-1):
@@ -81,10 +81,12 @@ def two_dimensional_laplace_solver():
             jacobi_numpy_vectorized(grid)
         benchmark_time = time.perf_counter() - benchmark_time
     else:
+        grid_list = grid.tolist()
         benchmark_time = time.perf_counter()
         for i in range(niter):
-            jacobi_list_loop(grid, size)
+            jacobi_list_loop(grid_list, size)
         benchmark_time = time.perf_counter() - benchmark_time
+        grid = np.array(grid_list)
 
     print(f"Time taken for {niter} iterations: {benchmark_time}")
     np.savez(filename, grid)
