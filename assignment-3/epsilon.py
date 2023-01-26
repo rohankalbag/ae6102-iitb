@@ -28,4 +28,4 @@ def get_double_precision_float_epsilon():
 if __name__ == '__main__':
     single_point_eps = str(get_single_precision_float_epsilon())
     double_point_eps = str(get_double_precision_float_epsilon())
-    print(single_point_eps + ", " + double_point_eps)
+    print(double_point_eps + ", " + single_point_eps)
