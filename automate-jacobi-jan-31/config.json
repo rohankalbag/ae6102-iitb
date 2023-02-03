@@ -1,0 +1,14 @@
+{
+  "project_name": "automate-jacobi-jan-31",
+  "root": "automan",
+  "sources": [
+    "/home/rohan/Desktop/AE6102/ae6102-iitb/automate-jacobi-jan-31"
+  ],
+  "workers": [
+    {
+      "host": "localhost",
+      "home": "",
+      "nfs": false
+    }
+  ]
+}
