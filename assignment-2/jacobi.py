@@ -88,7 +88,7 @@ def two_dimensional_laplace_solver():
         benchmark_time = time.perf_counter() - benchmark_time
         grid = np.array(grid_list)
 
-    print(f"Time taken for {niter} iterations: {benchmark_time}")
+    print(benchmark_time)
     np.savez(filename, grid)
 
 
