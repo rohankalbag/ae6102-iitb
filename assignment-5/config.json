@@ -1,0 +1,14 @@
+{
+  "project_name": "assignment-5",
+  "root": "automan",
+  "sources": [
+    "/home/rohan/Desktop/AE6102/ae6102-iitb/assignment-5"
+  ],
+  "workers": [
+    {
+      "host": "localhost",
+      "home": "",
+      "nfs": false
+    }
+  ]
+}
