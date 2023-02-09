@@ -1,4 +1,5 @@
-from automan.api import Problem, Simulation, Automator, mdict, opts2path, filter_cases
+from automan.api import Problem, Simulation, Automator
+from automan.api import mdict, opts2path, filter_cases
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -8,7 +9,8 @@ class Jacobi(Problem):
         return 'jacobi'
 
     def setup(self):
-        options = mdict(size = [10, 25, 50, 95], procedure=["loop","numba","numpy"])
+        options = mdict(size=[10, 25, 50, 95],
+                        procedure=["loop", "numba", "numpy"])
         base_cmd = 'python jacobi_numba.py -o $output_dir/data.npz -n 100'
         self.cases = [
             Simulation(
@@ -22,19 +24,19 @@ class Jacobi(Problem):
     def run(self):
         self.make_output_dir()
         self.make_plots()
-    
-    
+
     def make_plots(self):
         plt.figure()
         x = np.array([10, 25, 50, 95])
-        methods = ["loop","numba","numpy"]
+        methods = ["loop", "numba", "numpy"]
         d = {}
         d["loop"] = []
         d["numba"] = []
         d["numpy"] = []
         for size in x:
             for method in methods:
-                filtered_cases = filter_cases(self.cases, size=size, procedure=method)
+                filtered_cases = (filter_cases(self.cases, size=size,
+                                               procedure=method))
                 for case in filtered_cases:
                     with open(case.input_path('stdout.txt')) as file:
                         d[method].append(float(file.read()))
@@ -51,14 +53,18 @@ class Jacobi(Problem):
         plt.legend()
         plt.savefig(self.output_path('perf.png'))
         plt.close()
-        np.savez(self.output_path('perf.npz'), x=x, y_loop=y_loop, y_numpy=y_numpy, y_numba=y_numba)
+        np.savez(self.output_path('perf.npz'),
+                 x=x, y_loop=y_loop, y_numpy=y_numpy,
+                 y_numba=y_numba)
+
 
 class Julia(Problem):
     def get_name(self):
         return 'julia'
 
     def setup(self):
-        options = mdict(x_pixels = [320, 480, 640, 800], procedure=["numpy", "numba"])
+        options = mdict(x_pixels=[320, 480, 640, 800],
+                        procedure=["numpy", "numba"])
         base_cmd = 'python julia_numba.py -o $output_dir/data.npz -n 100'
         self.cases = [
             Simulation(
@@ -72,8 +78,7 @@ class Julia(Problem):
     def run(self):
         self.make_output_dir()
         self.make_plots()
-    
-    
+
     def make_plots(self):
         plt.figure()
         x = np.array([320, 480, 640, 800])
@@ -83,7 +88,9 @@ class Julia(Problem):
         d["numpy"] = []
         for pix in x:
             for method in methods:
-                filtered_cases = filter_cases(self.cases, x_pixels=pix, procedure=method)
+                filtered_cases = filter_cases(self.cases,
+                                              x_pixels=pix,
+                                              procedure=method)
                 for case in filtered_cases:
                     with open(case.input_path('stdout.txt')) as file:
                         d[method].append(float(file.read()))
@@ -98,9 +105,8 @@ class Julia(Problem):
         plt.legend()
         plt.savefig(self.output_path('perf.png'))
         plt.close()
-        np.savez(self.output_path('perf.npz'), x=x, y_numpy=y_numpy, y_numba=y_numba)
-
-
+        np.savez(self.output_path('perf.npz'),
+                 x=x, y_numpy=y_numpy, y_numba=y_numba)
 
 
 if __name__ == '__main__':
