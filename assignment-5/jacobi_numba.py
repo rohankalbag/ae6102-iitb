@@ -3,6 +3,7 @@
 
 
 from argparse import ArgumentParser
+# import matplotlib.pyplot as plt
 import numpy as np
 import time
 import numba
@@ -25,7 +26,8 @@ def command_line_fetcher():
 
 
 @numba.njit
-def jacobi_loop_numba(grid, N):
+def jacobi_loop_numba(grid):
+    N = grid.shape[0]
     temp_grid = np.empty_like(grid)
     for i in range(1, N-1):
         for j in range(1, N-1):
@@ -51,6 +53,16 @@ def jacobi_numpy_vectorized(grid):
                         + grid[1:-1, :-2])*0.25
 
 
+@numba.njit
+def benchmark_task(method, niter, grid):
+    if method == 'loop':
+        for i in range(niter):
+            jacobi_loop_numba(grid)
+    elif method == 'numba':
+        for i in range(niter):
+            jacobi_numpy_numba_vectorized(grid)
+
+
 def two_dimensional_laplace_solver():
     # collect all the command line arguments
     args = command_line_fetcher()
@@ -66,13 +78,15 @@ def two_dimensional_laplace_solver():
     # right column is assigned to 100
     grid[:, -1] = 100
 
+    # dummy calls
+    jacobi_loop_numba(grid)
+    jacobi_numpy_numba_vectorized(grid)
+    benchmark_task('loop', niter, grid)
+    benchmark_task('numba', niter, grid)
     # main jacobi calculation
     if procedure == 'loop':
-        # dummy calls to allow numba to analyze code
-        jacobi_loop_numba(grid, size)
         benchmark_time = time.perf_counter()
-        for i in range(niter):
-            jacobi_loop_numba(grid, size)
+        benchmark_task('loop', niter, grid)
         benchmark_time = time.perf_counter() - benchmark_time
     elif procedure == 'numpy':
         benchmark_time = time.perf_counter()
@@ -80,15 +94,11 @@ def two_dimensional_laplace_solver():
             jacobi_numpy_vectorized(grid)
         benchmark_time = time.perf_counter() - benchmark_time
     else:
-        # dummy calls to allow numba to analyze code
-        jacobi_numpy_numba_vectorized(grid)
         benchmark_time = time.perf_counter()
-        for i in range(niter):
-            jacobi_numpy_numba_vectorized(grid)
+        benchmark_task('numba', niter, grid)
         benchmark_time = time.perf_counter() - benchmark_time
 
-    print(f"{benchmark_time}")
-
+    print(benchmark_time)
     np.savez(filename, grid)
 
 

@@ -65,7 +65,7 @@ def evaluate_julia_numba(x_pixels, y_pixels, niter):
         for j in range(y_pixels):
             iters = 0
             z = x[i] + 1j*y[j]
-            while (iters < niter - 1) and (np.abs(z) < 2):
+            while iters < niter-1 and np.abs(z) < 2:
                 z = z**2 + (-0.8 + 0.156*1j)
                 iters += 1
             result[i, j] = iters
@@ -92,11 +92,5 @@ if __name__ == "__main__":
         result = evaluate_julia_numba(x_pixels, y_pixels, niter)
         benchmark_time = time.perf_counter() - benchmark_time
 
-    print(f"{benchmark_time}")
+    print(benchmark_time)
     np.savez(filename, result)
-
-    # visualize the result
-    # if args.vis:
-    #     plt.figure(figsize=(16, 12))
-    #     plt.imshow(result.T, extent=[-2, 2, -1.5, 1.5])
-    #     plt.show()
