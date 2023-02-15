@@ -92,11 +92,5 @@ if __name__ == "__main__":
         result = evaluate_julia_numba(x_pixels, y_pixels, niter)
         benchmark_time = time.perf_counter() - benchmark_time
 
-    print(f"{benchmark_time}")
+    print(benchmark_time)
     np.savez(filename, result)
-
-    # visualize the result
-    # if args.vis:
-    #     plt.figure(figsize=(16, 12))
-    #     plt.imshow(result.T, extent=[-2, 2, -1.5, 1.5])
-    #     plt.show()
