@@ -14637,8 +14637,8 @@ and <a href="https://www.cpu-monkey.com/en/cpu-intel_core_i7_9750h">https://www.
 <p>Each execution core has an instruction cache, data cache, and 256-KB L2 cache. All execution cores share the LLC (L3 cache).</p>
 </blockquote>
 <ul>
-<li>Thus each core has its own 32kB L1 instruction and 32 kB L1 data cache, L2 cache</li>
-<li>The L3 cache is shared among all the six cores</li>
+<li>Thus each core has its own 32kB L1 instruction and 32 kB L1 data cache, 256 kB L2 cache</li>
+<li>The 12 MB L3 cache is shared among all the six cores</li>
 </ul>
 
 </div>
@@ -14653,13 +14653,19 @@ and <a href="https://www.cpu-monkey.com/en/cpu-intel_core_i7_9750h">https://www.
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Question-3">Question 3<a class="anchor-link" href="#Question-3">&#182;</a></h2><p>As per <a href="https://ark.intel.com/content/www/us/en/ark/products/191045/intel-core-i79750h-processor-12m-cache-up-to-4-50-ghz.html">https://ark.intel.com/content/www/us/en/ark/products/191045/intel-core-i79750h-processor-12m-cache-up-to-4-50-ghz.html</a></p>
 <ul>
-<li>Max Memory Bandwidth: 41.8 GB/s for DDR4 onchip RAM</li>
+<li><p>Max Memory Bandwidth: 41.8 GB/s for DDR4 onchip RAM</p>
+</li>
+<li><p>Each core can execute up to two FMA (fused multiply-add) operations per cycle, assuming AVX2 instruction support.</p>
+</li>
+<li><p>At a base clock speed of 2.6 GHz, this translates to a peak performance of 2 x 2 x 2.6 = 10.4 GFLOPS per core. But actual performance will be lower than theoretical peak GFLOPS per core</p>
+</li>
 </ul>
-<p>As per <a href="https://setiathome.berkeley.edu/cpu_list.php">https://setiathome.berkeley.edu/cpu_list.php</a> for i7-9750H</p>
+<p>As per <a href="https://setiathome.berkeley.edu/cpu_list.php">https://setiathome.berkeley.edu/cpu_list.php</a> for i7-9750H (experimentally obtained)</p>
 <ul>
-<li>peak GFLOPS per computer: 49.34</li>
+<li>peak GFLOPS per computer (cumulative): 49.34</li>
 <li>peak GFLOPS per core: = 4.11</li>
 </ul>
+<p>We will use the following experimentally obtained values to compare our benchmarked performance</p>
 
 </div>
 </div>
@@ -14673,7 +14679,7 @@ and <a href="https://www.cpu-monkey.com/en/cpu-intel_core_i7_9750h">https://www.
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Question-4">Question 4<a class="anchor-link" href="#Question-4">&#182;</a></h2><p>As per <a href="https://ark.intel.com/content/www/us/en/ark/products/191045/intel-core-i79750h-processor-12m-cache-up-to-4-50-ghz.html">https://ark.intel.com/content/www/us/en/ark/products/191045/intel-core-i79750h-processor-12m-cache-up-to-4-50-ghz.html</a></p>
 <ul>
-<li>Bus Speed: 8 GT/s (Giga transfers per second)</li>
+<li>Bus Speed (System Bus Frequency): 8 GT/s (Giga transfers per second) the processor uses Direct Media Interface 3.0</li>
 </ul>
 
 </div>
@@ -14724,7 +14730,7 @@ and <a href="https://www.cpu-monkey.com/en/cpu-intel_core_i7_9750h">https://www.
     <span class="c1"># assuming 1 store is same as 2 loads</span>
     <span class="c1"># hence 5 word data traffic per iteration</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-        <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
 
 <span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span>
@@ -14861,6 +14867,19 @@ class="
 
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The behavior of the plot is as was shown in the class. The bandwidth increases to reach a maximum value of close to 1 TB/s which may be for the L1 cache. Then it drops as expected to around 80-90 GB/s for individual L2 cache, 60-70 GB/s for overall L2 cache, 30-40 GB/s for L3 cache, and saturates at around 25 GB/s for the dual channel DDR4 RAM.</p>
+<p>Theoretically, it is expected that peak DDR4 bandwidth is 41.8 GB/s but we have obtained 25 GB/s, this may because of our architecture reaching a experimental bottleneck which doesn't allow it to reach the theoretical peak DDR4 bandwidth.</p>
+
+</div>
+</div>
+</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
@@ -15139,6 +15158,18 @@ class="
 
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>The nature of the plot is similar to the Memory Bandwidth plot from earlier and increases, decreases and saturates for large input size. As we increase the number of floating point operations done per operation, the effects of pipelining and superscalar are evident and the overall FLOPS increases and tend to saturate as we go above 64 FLOPS/iteration after which we are bound by computing power, when the plot saturates. The maxima of each plot can be seen below as follows</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -15195,7 +15226,8 @@ Max GFLOPS for 4 FLOP benchmark code 8.145734810036641
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="Thus-we-see-that-the-maximum-GFLOPS-for-our-benchmark-is-50.10-GFLOPS,-which-is-about-the-same-order-as-suggested-by-the-reference-which-said-49.34-GFLOPS.">Thus we see that the maximum GFLOPS for our benchmark is 50.10 GFLOPS, which is about the same order as suggested by the reference which said 49.34 GFLOPS.<a class="anchor-link" href="#Thus-we-see-that-the-maximum-GFLOPS-for-our-benchmark-is-50.10-GFLOPS,-which-is-about-the-same-order-as-suggested-by-the-reference-which-said-49.34-GFLOPS.">&#182;</a></h4>
+<p>Thus we see that the cumulative GFLOPS for our benchmark is 50.10 GFLOPS, which is about the same order as suggested by the experimental reference which said 49.34 GFLOPS.</p>
+
 </div>
 </div>
 </div>
